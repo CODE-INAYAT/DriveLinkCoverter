@@ -1,88 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drive Link Converter</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-.container {
-    text-align: center;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    margin-bottom: 20px;
-}
-
-input[type="text"] {
-    width: 80%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#output {
-    margin-top: 20px;
-    font-weight: bold;
-}
-
-</style>
-<body>
-    <div class="container">
-        <h1>Google Drive Link Converter</h1>
-        <input type="text" id="driveLink" placeholder="Paste your Google Drive link here">
-        <button id="convertBtn">Convert</button>
-        <p id="output"></p>
-    </div>
-    <script src="script.js"></script>
-</body>
-<script>
-document.getElementById('convertBtn').addEventListener('click', function () {
-    const inputLink = document.getElementById('driveLink').value.trim();
-    const output = document.getElementById('output');
-
-    // Regular expression to extract file ID
-    const match = inputLink.match(/[-\w]{25,}/);
-
-    if (match) {
-        const fileId = match[0];
-        const downloadLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
-        output.innerHTML = `Your downloadable link: <a href="${downloadLink}" target="_blank">${downloadLink}</a>`;
-    } else {
-        output.textContent = 'Invalid Google Drive link. Please try again.';
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Google Drive Link Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
     }
-});
 
-</script>
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .output {
+      margin-top: 20px;
+      background: #e9ecef;
+      padding: 15px;
+      border-radius: 6px;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      margin-top: 10px;
+      background: #28a745;
+    }
+
+    .copy-btn:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Google Drive Link Converter</h2>
+    <input type="text" id="inputLink" placeholder="Paste your Google Drive link here..." />
+    <button onclick="convertLink()">Convert Link</button>
+    
+    <div id="result" class="output" style="display:none;"></div>
+    <button id="copyButton" class="copy-btn" style="display:none;" onclick="copyToClipboard()">Copy Link</button>
+  </div>
+
+  <script>
+    function convertLink() {
+      const input = document.getElementById("inputLink").value.trim();
+      const resultDiv = document.getElementById("result");
+      const copyButton = document.getElementById("copyButton");
+
+      // Regex to extract file ID
+      const regex = /\/d\/([a-zA-Z0-9_-]{25,})/;
+      const match = input.match(regex);
+
+      if (match && match[1]) {
+        const fileId = match[1];
+        const directLink = `https://drive.usercontent.google.com/download?id=${fileId}&export=download`;
+
+        resultDiv.innerText = directLink;
+        resultDiv.style.display = "block";
+        copyButton.style.display = "inline-block";
+      } else {
+        resultDiv.innerText = "Invalid Google Drive link!";
+        resultDiv.style.display = "block";
+        copyButton.style.display = "none";
+      }
+    }
+
+    function copyToClipboard() {
+      const resultDiv = document.getElementById("result");
+      const text = resultDiv.innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Link copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy: " + err);
+      });
+    }
+  </script>
+</body>
 </html>
